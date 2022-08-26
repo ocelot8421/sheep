@@ -9,5 +9,4 @@ public class RoboSheepCoordinatesStore extends CoordinateDataStore {
         List<Long> locationList = super.getCoordinates();
         return locationList.get(locationList.size()-1);
     }
-
 }

@@ -11,13 +11,17 @@ public class CoordinateDataStore {
     }
 
     //The column is marked by last 6 digits, other digits before that shows the number of row. The numbering start with 1 (not with 0)!
-    public void addConvertedCoordinate(long coordinateY, long coordinateX) {
+    public void convertThenAddCoordinates(long coordinateY, long coordinateX) {
         if (coordinateX >= 0) {
             coordinates.add(coordinateY * 1000000 + coordinateX);
         }
     }
 
-    public void removeCoordinate(long coordinate) {
+    public void addConvertedCoordinates(long coordinate) {
+        coordinates.add(coordinate);
+    }
+
+    public void removeConvertedCoordinate(long coordinate) {
             coordinates.remove(coordinate);
     }
 
