@@ -6,6 +6,8 @@ settings / Languages&Frameworks / Markdown / Markdown extensions; check/install 
 ```mermaid
 classDiagram
 
+Main --> RoboSheepAccumulator : instantiate
+
 Main ..> GardenMapImporter : import
 GardenMapImporter ..> CoordinateHandler : import
 GardenMapImporter --> CoordinateDataStore : instantiate
@@ -24,29 +26,18 @@ CoordinateDataStore : + addCoordinate(long)
 ScreenPrinter : - long TIME_OUT
 ScreenPrinter : + keepDistanceBetweenScreenshots()
 
+RoboSheepAccumulator : - int accumulatorLevel
+RoboSheepAccumulator : - int minimalAccumulatorLevel
+RoboSheepAccumulator : + needCharge()
+RoboSheepAccumulator : + saveChargeLevelAfterMovement()
+
+
 
 ```
+#Coordinates conversion
 
-
-
-# (UML markers - training)
-```mermaid
-classDiagram
-
-MedicationIntakeDto o-- MedicationIntake
-
-Class01 <|-- AveryLongClass : Cool
-Class03 *-- Class04
-Class05 o-- Class06
-Class07 .. Class08
-Class09 --> C2 : Where am i?
-Class09 --* C3
-Class09 --|> Class07
-Class07 : equals()
-Class07 : Object[] elementData
-Class01 : size()
-Class01 : int chimp
-Class01 : int gorilla
-Class08 <--> C2: Cool label
-
-```
+|     | 1         | 2         |
+|-----|-----------|-----------|
+| 1   | 1 000 001 | 1 000 002 |
+| 2   | 2 000 001 | 2 000 002 |
+| 3   | 3 000 001 | 3 000 002 |
