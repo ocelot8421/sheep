@@ -11,8 +11,7 @@ public class GardenMapImporter {
     private static long gardenWidth;
     private static long gardenLength;
 
-    public static CoordinateDataStore importGardenMap(RoboSheepCoordinatesStore roboSheepCoordinatesStore) {
-        String nameFile = "garden_A";
+    public static CoordinateDataStore importGardenMap(RoboSheepCoordinatesStore roboSheepCoordinatesStore, String nameFile) {
         CoordinateDataStore coordinatesLawn = new CoordinateDataStore();
         coordinatesLawn.setName("Coordinates of lawn fields");
         try (BufferedReader bufferedReader = Files.newBufferedReader(mapPath.resolve(nameFile))) {

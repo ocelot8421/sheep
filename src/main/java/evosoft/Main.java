@@ -1,20 +1,26 @@
 package evosoft;
 
 import java.util.Objects;
-import java.util.Random;
 
 import static evosoft.GardenMapImporter.*;
-import static evosoft.ScreenPrinter.*;
+import static evosoft.ScreenPrinter.keepDistanceBetweenScreenshots;
+import static evosoft.ScreenPrinter.printMapFromCoordinatesStore;
 
 public class Main {
+    private static final int MOVEMENTS_MAX = 1000000;
+
+
     public static void main(String[] args) {
+        String nameFile = "garden_A";
+//        String nameFile = args[0];
+
         RoboSheepBattery battery = new RoboSheepBattery();
         RoboSheepCoordinatesStore roboSheepCoordinatesStore = new RoboSheepCoordinatesStore();
         roboSheepCoordinatesStore.setName("Coordinates of RoboSheep");
         RoboSheepSearchingUnit searchingUnit = new RoboSheepSearchingUnit();
         RoboSheepMowerUnit mowerUnit = new RoboSheepMowerUnit();
 
-        CoordinateDataStore coordinatesLawn = importGardenMap(roboSheepCoordinatesStore);
+        CoordinateDataStore coordinatesLawn = importGardenMap(roboSheepCoordinatesStore, nameFile);
         keepDistanceBetweenScreenshots(3);
 
         Long locationCharger = roboSheepCoordinatesStore.receiveLastLocation();
@@ -22,8 +28,7 @@ public class Main {
         Long nextLocationRoboSheep;
         Long previousLocationRoboSheep;
 
-        int numberOfMoves = 1000000;
-        for (int i = 0; i < numberOfMoves; i++) {
+        for (int i = 0; i < MOVEMENTS_MAX; i++) {
             if (!battery.needCharge()) {
 
                 System.out.println("Steps: " + i);
@@ -95,7 +100,7 @@ public class Main {
                 System.out.println("RoboSheep need to go back to charge.");
                 break; //TODO sheep need to go back to the charge
             }
-            if (Objects.equals(locationRoboSheep, locationCharger) && coordinatesLawn.getCoordinates().isEmpty()){
+            if (Objects.equals(locationRoboSheep, locationCharger) && coordinatesLawn.getCoordinates().isEmpty()) {
                 break;
             }
         }
