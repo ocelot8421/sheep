@@ -23,14 +23,6 @@ public class Main {
         Long previousLocationRoboSheep;
 
         int numberOfMoves = 1000000;
-//        int numberOfMoves = 85;
-//        int numberOfMoves = 87;
-//        int numberOfMoves = 160;
-//        int numberOfMoves = 166;
-//        int numberOfMoves = 364;
-//        int numberOfMoves = 373;
-//        int numberOfMoves = 642;
-
         for (int i = 0; i < numberOfMoves; i++) {
             if (!battery.needCharge()) {
 
@@ -81,14 +73,13 @@ public class Main {
                 }
                 System.out.println("RoboSheep next location: " + nextLocationRoboSheep);
 
-
-                System.out.println("Steps: " + i);
-                System.out.println("RoboSheep last 10 step: " + roboSheepCoordinatesStore.receiveLastTenLocation());
-                System.out.println("RoboSheep previous location: " + previousLocationRoboSheep);
-                System.out.println("RoboSheep location: " + locationRoboSheep);
-                System.out.println(neighbourLawnFields);
-                System.out.println(neighbourMowedFields);
-                System.out.println("RoboSheep next location: " + nextLocationRoboSheep);
+//                System.out.println("Steps: " + i);
+//                System.out.println("RoboSheep last 10 step: " + roboSheepCoordinatesStore.receiveLastTenLocation());
+//                System.out.println("RoboSheep previous location: " + previousLocationRoboSheep);
+//                System.out.println("RoboSheep location: " + locationRoboSheep);
+//                System.out.println(neighbourLawnFields);
+//                System.out.println(neighbourMowedFields);
+//                System.out.println("RoboSheep next location: " + nextLocationRoboSheep);
 
                 printMapFromCoordinatesStore(
                         getGardenWidth(),

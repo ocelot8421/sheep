@@ -2,8 +2,8 @@ package evosoft;
 
 public class ScreenPrinter {
 //    private static final long TIME_OUT = 600;
-//    private static final long TIME_OUT = 300;
-    private static final long TIME_OUT = 1;
+    private static final long TIME_OUT = 300;
+//    private static final long TIME_OUT = 1;
 
     public static void printMapFromCoordinatesStore(
             long gardenWidth, long gardenLength,
