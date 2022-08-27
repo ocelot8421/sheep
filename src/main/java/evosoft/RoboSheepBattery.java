@@ -1,7 +1,7 @@
 package evosoft;
 
 public class RoboSheepBattery {
-    private int batteryLevel = 1000;
+    private int batteryLevel = 100000;
     private int minBatteryLevel = 100; // TODO It depends on the distance
 
 

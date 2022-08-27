@@ -1,22 +1,23 @@
 package evosoft;
 
 public class ScreenPrinter {
-    private static final long TIME_OUT = 600;
+//    private static final long TIME_OUT = 600;
+    private static final long TIME_OUT = 100;
 
     public static void printMapFromCoordinatesStore(
             long gardenWidth, long gardenLength,
             Long locationRoboSheep, Long locationCharger,
-            CoordinateDataStore coordinatesMowedField,
+            CoordinateDataStore roboSheepCoordinatesStore,
             CoordinateDataStore coordinatesLawn
     ) {
         for (int j = 1; j <= gardenLength; j++) {
             for (int i = 1; i <= gardenWidth; i++) {
                 long coordinate = j * 1000000L + i;
-                if (coordinate == locationCharger) {
-                    System.out.print("O");
-                } else if (coordinate == locationRoboSheep) {
+                if (coordinate == locationRoboSheep) {
                     System.out.print("X");
-                } else if (coordinatesMowedField.getCoordinates().contains(coordinate)) {
+                } else if (coordinate ==  locationCharger) {
+                    System.out.print("O");
+                } else if (roboSheepCoordinatesStore.getCoordinates().contains(coordinate)) {
                     System.out.print("_");
                 } else if (coordinatesLawn.getCoordinates().contains(coordinate)) {
                     System.out.print("i");

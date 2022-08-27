@@ -16,29 +16,33 @@ public class Main {
         CoordinateDataStore coordinatesLawn = importGardenMap(roboSheepCoordinatesStore);
         keepDistanceBetweenScreenshots(3);
 
-        Long locationRoboSheep = roboSheepCoordinatesStore.receiveLastLocation();
-        Long locationCharger = locationRoboSheep;
-        CoordinateDataStore coordinatesMowedField;
+        Long nextLocationRoboSheep = roboSheepCoordinatesStore.receiveLastLocation();
+        Long locationRoboSheep;
+        Long locationCharger = nextLocationRoboSheep;
 
-        int numberOfMoves = 100;
+        int numberOfMoves = 1000000;
+//        int numberOfMoves = 66;
         for (int i = 0; i < numberOfMoves; i++) {
             if (!battery.needCharge()) {
-
-
+                System.out.println("Steps: " + i);
                 CoordinateDataStore neighbourLawnFields =
-                        searchingUnit.findNeighbourLawnFields(locationRoboSheep, coordinatesLawn);
-                locationRoboSheep = neighbourLawnFields.getCoordinates().get(0);
+                        searchingUnit.findNeighbourLawnFields(nextLocationRoboSheep, coordinatesLawn);
+                nextLocationRoboSheep = neighbourLawnFields.getCoordinates().get(0);
+                locationRoboSheep = roboSheepCoordinatesStore.receiveLastLocation();
 //                System.out.println(roboSheepCoordinatesStore);
-                System.out.println(locationRoboSheep);
-                System.out.println(neighbourLawnFields);
+                System.out.println("RoboSheep last 5 step: " + roboSheepCoordinatesStore.receiveLast5Location());
+                System.out.println("RoboSheep location: " + locationRoboSheep);
 
-                mowerUnit.mow(roboSheepCoordinatesStore, neighbourLawnFields, coordinatesLawn);
+                System.out.println(neighbourLawnFields);
+                System.out.println("RoboSheep next location: " + nextLocationRoboSheep);
+
                 printMapFromCoordinatesStore(
                         getGardenWidth(), getGardenLength(),
                         locationRoboSheep, locationCharger,
                         roboSheepCoordinatesStore, coordinatesLawn);
-                keepDistanceBetweenScreenshots(3);
+                mowerUnit.mow(roboSheepCoordinatesStore, neighbourLawnFields, coordinatesLawn);
                 battery.saveChargeLevelAfterMovement();
+                keepDistanceBetweenScreenshots(3);
             } else {
                 System.out.println("RoboSheep need to go back to charge.");
                 break; //TODO sheep need to go back to the charge

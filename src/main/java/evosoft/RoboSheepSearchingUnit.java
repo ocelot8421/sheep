@@ -17,7 +17,7 @@ public class RoboSheepSearchingUnit extends CoordinateDataStore {
         for (Long distance : distanceOfNeighbours) {
             coordinateNeighbourField = locationRoboSheep + distance;
             if (coordinatesLawn.getCoordinates().contains(coordinateNeighbourField)) {
-                neighbourLawnFields.convertThenAddCoordinates(0, coordinateNeighbourField);
+                neighbourLawnFields.addConvertedCoordinates(coordinateNeighbourField);
             }
         }
         return neighbourLawnFields;
