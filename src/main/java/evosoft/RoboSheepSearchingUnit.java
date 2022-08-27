@@ -5,10 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RoboSheepSearchingUnit extends CoordinateDataStore {
+    private List<Long> distanceOfNeighbours = Arrays.asList( // clockwise
+            -1L, -1000001L, -1000000L, -999999L, 1L, 1000001L, 1000000L, 999999L);
 
     public CoordinateDataStore findAndSortNeighbourTypeFields(Long previousLocationRoboSheep, Long locationRoboSheep, CoordinateDataStore coordinatesTypeFieldsDB) {
-        List<Long> distanceOfNeighbours = Arrays.asList( // clockwise
-                -1L, -1000001L, -1000000L, -999999L, 1L, 1000001L, 1000000L, 999999L);
         long stepVector = locationRoboSheep - previousLocationRoboSheep;
         distanceOfNeighbours = neighbourFieldsSorter(stepVector, distanceOfNeighbours);
         CoordinateDataStore neighbourFieldsSelected = new CoordinateDataStore();
