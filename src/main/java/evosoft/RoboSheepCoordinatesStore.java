@@ -11,13 +11,22 @@ public class RoboSheepCoordinatesStore extends CoordinateDataStore {
         return locationList.get(locationList.size() - 1);
     }
 
-    public List<Long> receiveLast5Location() {
+    public List<Long> receiveLastTenLocation() {
         List<Long> locationList = super.getCoordinates();
         List<Long> last5Location = new ArrayList<>();
-        int lastStepsLimit = Math.min(locationList.size(), 5);
+        int lastStepsLimit = Math.min(locationList.size(), 10);
         for (int i = 0; i < lastStepsLimit; i++) {
-                last5Location.add(locationList.get(locationList.size() - lastStepsLimit + i));
+            last5Location.add(locationList.get(locationList.size() - lastStepsLimit + i));
         }
         return last5Location;
+    }
+
+    public Long receivePenultimateLocation(Long locationCharger) {
+        int size = receiveLastTenLocation().size();
+        if (size < 2) {
+            return locationCharger;
+        } else {
+            return receiveLastTenLocation().get(size - 2);
+        }
     }
 }
