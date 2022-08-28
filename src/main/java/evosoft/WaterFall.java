@@ -12,7 +12,8 @@ public class WaterFall {
 //    private static final int MOVEMENTS_FAST = 355; // situation in the center - left garden area
 //    private static final int MOVEMENTS_FAST = 388; // situation at right upper corner - left garden area
 //    private static final int MOVEMENTS_FAST = 475; // situation at left upper corner - right garden area
-    private static final int MOVEMENTS_FAST = 672; // situation at right side - right garden area
+    private static final int MOVEMENTS_FAST = 668; // situation at right side - right garden area
+    //    private static final int MOVEMENTS_FAST = 708; // going back is not too perfect
     //    private static final int MOVEMENTS_FAST = 1173;
     private static final int PERIMETER_MIN = 8;
 
@@ -32,11 +33,12 @@ public class WaterFall {
         Long nearestLawnField;
         Long nearestPerimeterFieldToRoboSheep;
         Long nearestPerimeterFieldTofNearestLawn;
-        CoordinateDataStore perimeterWay = new CoordinateDataStore();
+        CoordinateDataStore perimeterWay = new CoordinateDataStore("Perimeter way");
+//        CoordinateDataStore perimeterWayCorrected = new CoordinateDataStore("Corrected perimeter way");
         CoordinateDataStore lawnFields;
-        CoordinateDataStore perimeterSegment;
         CoordinateDataStore neighbourLawnFields;
         CoordinateDataStore neighbourMowedFields;
+        CoordinateDataStore neighbourMowedFieldsCharger;
         CoordinateDataStore nearestPerimeterFieldsToRoboSheep;
 
         lawnFields = importGardenMap(roboSheepCoordinatesStore, fileNameGardenMap);
@@ -46,6 +48,9 @@ public class WaterFall {
         for (int i = 0; i < MOVEMENTS_MAX; i++) {
             if (!battery.needCharge()) {
                 locationRoboSheep = roboSheepCoordinatesStore.receiveLastLocation();
+                neighbourMowedFieldsCharger = searchingUnit.findAndSortNeighbourTypeFields(
+                        "Moved fields around charger", locationCharger,
+                        locationCharger, roboSheepCoordinatesStore);
                 if (!perimeterWay.getCoordinates().contains(locationRoboSheep) &&
                         MOVEMENTS_FAST > perimeterWay.getCoordinates().size()) {
                     perimeterWay.addConvertedCoordinates(locationRoboSheep);
@@ -64,20 +69,22 @@ public class WaterFall {
                 locationRoboSheepNext = neighbourLawnFields.getCoordinates().size() > 0 ?
                         neighbourLawnFields.getCoordinates().get(0) :
                         locationRoboSheepNextToNearestLawn;
-
-
                 boolean isInLoop =
                         Collections.frequency(roboSheepCoordinatesStore.receiveLastTenLocation(), locationRoboSheep) > 2;
-                nearestPerimeterFieldToRoboSheep = searchingUnit.findNearestFields(locationRoboSheep, perimeterWay);
-                nearestPerimeterFieldTofNearestLawn = searchingUnit.findNearestFields(nearestLawnField, perimeterWay);
+                neighbourMowedFieldsCharger = searchingUnit.findAndSortNeighbourTypeFields(
+                        "", locationCharger,
+                        locationCharger, lawnFields);
+                CoordinateDataStore perimeterWayCorrected = searchingUnit.receiveCorrectedPerimeterWay(perimeterWay, neighbourMowedFieldsCharger);
+                nearestPerimeterFieldToRoboSheep =
+                        searchingUnit.findNearestFields(locationRoboSheep, perimeterWayCorrected);
+                nearestPerimeterFieldTofNearestLawn =
+                        searchingUnit.findNearestFields(nearestLawnField, perimeterWayCorrected);
                 if (isInLoop) {
                     CoordinateDataStore detour = searchingUnit.findDetour(
-                            nearestPerimeterFieldToRoboSheep, nearestPerimeterFieldTofNearestLawn, perimeterWay);
+                            nearestPerimeterFieldToRoboSheep, nearestPerimeterFieldTofNearestLawn, perimeterWayCorrected);
                     for (int j = 0; j < detour.getCoordinates().size() - 1; j++) {
-
                         locationRoboSheep = detour.getCoordinates().get(j);
                         locationRoboSheepNext = detour.getCoordinates().get(j + 1);
-
                         printStepsInLoop(i, j, 0);
                         battery.printBatteryLevel();
                         printLocations(locationRoboSheepPrevious, locationRoboSheep, locationRoboSheepNext);

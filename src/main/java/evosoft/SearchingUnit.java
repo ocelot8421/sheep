@@ -110,17 +110,29 @@ public class SearchingUnit extends CoordinateDataStore {
     }
 
     public CoordinateDataStore findDetour(
-            long nearestPerimeterFieldToRoboSheep, long nearestPerimeterFieldTofNearestLawn, CoordinateDataStore perimeterWay) {
+            long nearestPerimeterFieldToRoboSheep, long nearestPerimeterFieldTofNearestLawn, CoordinateDataStore perimeterWayCoorected) {
         CoordinateDataStore detour = new CoordinateDataStore("Detour");
-        int startIndex = perimeterWay.getCoordinates().indexOf(nearestPerimeterFieldToRoboSheep);
-        int endIndex = perimeterWay.getCoordinates().indexOf(nearestPerimeterFieldTofNearestLawn);
+        int startIndex = perimeterWayCoorected.getCoordinates().indexOf(nearestPerimeterFieldToRoboSheep);
+        int endIndex = perimeterWayCoorected.getCoordinates().indexOf(nearestPerimeterFieldTofNearestLawn);
 
         if (startIndex <= endIndex) {
-            detour.setCoordinates(perimeterWay.getCoordinates().subList(startIndex, endIndex + 1));
+            detour.setCoordinates(perimeterWayCoorected.getCoordinates().subList(startIndex, endIndex + 1));
         } else {
-            detour.setCoordinates(perimeterWay.getCoordinates().subList(endIndex, startIndex + 1));
+            detour.setCoordinates(perimeterWayCoorected.getCoordinates().subList(endIndex, startIndex + 1));
             detour.getCoordinates().sort(Collections.reverseOrder());
         }
         return detour;
+    }
+
+    public CoordinateDataStore receiveCorrectedPerimeterWay(CoordinateDataStore perimeterWay, CoordinateDataStore neighbourMowedFieldsCharger) {
+        CoordinateDataStore perimeterCorrected = new CoordinateDataStore("Corrected perimeter way");
+        for (Long coordinate : perimeterWay.getCoordinates()) {
+            if (!neighbourMowedFieldsCharger.getCoordinates().contains(coordinate)) {
+                perimeterCorrected.addConvertedCoordinates(coordinate);
+            } else {
+                break;
+            }
+        }
+        return perimeterCorrected;
     }
 }
