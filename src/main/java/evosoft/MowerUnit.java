@@ -1,6 +1,6 @@
 package evosoft;
 
-public class RoboSheepMowerUnit {
+public class MowerUnit {
     public void mow(
             RoboSheepCoordinatesStore roboSheepCoordinatesStore,
             Long nextLocationRoboSheep,

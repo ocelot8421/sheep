@@ -1,8 +1,6 @@
 package evosoft;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
 import static evosoft.GardenMapImporter.*;
@@ -10,146 +8,133 @@ import static evosoft.ScreenPrinter.*;
 
 public class WaterFall {
     private static final int MOVEMENTS_MAX = 1000000;
-    private static final int MOVEMENTS_FAST = 1173;
+    //    private static final int MOVEMENTS_FAST = 196; // situation at left bottom corner
+//    private static final int MOVEMENTS_FAST = 355; // situation in the center - left garden area
+    private static final int MOVEMENTS_FAST = 388; // situation at right upper corner - left garden area
+    //    private static final int MOVEMENTS_FAST = 1173;
     private static final int PERIMETER_MIN = 8;
 
 
-    public void start() {
-        String nameFile = "garden_B";
-
-        RoboSheepBattery battery = new RoboSheepBattery();
+    public void start() { //TODO not encapsulated
+        String fileNameGardenMap = "garden_B";
+        Battery battery = new Battery();
+        MowerUnit mowerUnit = new MowerUnit();
+        SearchingUnit searchingUnit = new SearchingUnit();
         RoboSheepCoordinatesStore roboSheepCoordinatesStore = new RoboSheepCoordinatesStore();
-        roboSheepCoordinatesStore.setName("Coordinates of RoboSheep");
-        RoboSheepSearchingUnit searchingUnit = new RoboSheepSearchingUnit();
-        RoboSheepMowerUnit mowerUnit = new RoboSheepMowerUnit();
-
-        CoordinateDataStore coordinatesLawn = importGardenMap(roboSheepCoordinatesStore, nameFile);
-        keepDistanceBetweenScreenshots(3, MOVEMENTS_FAST, 0);
-
-        Long locationCharger = roboSheepCoordinatesStore.receiveLastLocation();
+        Long locationCharger;
         Long locationRoboSheep;
-        Long nextLocationRoboSheep;
-        Long previousLocationRoboSheep;
-        CoordinateDataStore chargerCoordinates =
-                searchingUnit.findAndSortNeighbourTypeFields(
-                        locationCharger,
-                        locationCharger,
-                        coordinatesLawn);
-        List<Long> perimeterWay = new ArrayList<>();
-        List<Integer> perimeterLength = new ArrayList<>();
+        Long locationRoboSheepNext;
+        Long locationRoboSheepPrevious;
+        Long locationRoboSheepNextToPerimeter;
+        Long nearestLawnField;
+        Long nearestPerimeterFieldToRoboSheep;
+        Long nearestPerimeterFieldToNearestLawn;
+        CoordinateDataStore perimeterWay = new CoordinateDataStore();
+        CoordinateDataStore lawnFields;
+        CoordinateDataStore perimeterSegment;
+        CoordinateDataStore neighbourLawnFields;
+        CoordinateDataStore neighbourMowedFields;
+        CoordinateDataStore nearestPerimeterFieldsToRoboSheep;
+
+        lawnFields = importGardenMap(roboSheepCoordinatesStore, fileNameGardenMap);
+        locationCharger = roboSheepCoordinatesStore.receiveLastLocation();
+        keepDistanceBetweenScreenshots(3, MOVEMENTS_FAST, 0);
 
         for (int i = 0; i < MOVEMENTS_MAX; i++) {
             if (!battery.needCharge()) {
-                previousLocationRoboSheep = roboSheepCoordinatesStore.receivePenultimateLocation(locationCharger);
                 locationRoboSheep = roboSheepCoordinatesStore.receiveLastLocation();
-                chargerCoordinates.setName("Neighbour fields of charger");
-                if (!perimeterWay.contains(locationRoboSheep) &&
-                        MOVEMENTS_FAST > perimeterWay.size()
-                ) {
-                    perimeterWay.add(locationRoboSheep);
-                } else {
-                    perimeterLength.add(perimeterWay.size());
+                if (!perimeterWay.getCoordinates().contains(locationRoboSheep) &&
+                        MOVEMENTS_FAST > perimeterWay.getCoordinates().size()) {
+                    perimeterWay.addConvertedCoordinates(locationRoboSheep);
                 }
-                CoordinateDataStore neighbourLawnFields =
-                        searchingUnit.findAndSortNeighbourTypeFields(
-                                previousLocationRoboSheep,
-                                locationRoboSheep,
-                                coordinatesLawn);
-                neighbourLawnFields.setName("Neighbour  lawn fields");
-                CoordinateDataStore neighbourMowedFields =
-                        searchingUnit.findAndSortNeighbourTypeFields(
-                                previousLocationRoboSheep,
-                                locationRoboSheep,
-                                roboSheepCoordinatesStore);
-                neighbourMowedFields.setName("Neighbour mowed fields");
-                if (neighbourLawnFields.getCoordinates().size() > 0) {
-                    nextLocationRoboSheep = neighbourLawnFields.getCoordinates().get(0);
-                } else {
-                    Long nearestLawnField;
-                    if (!coordinatesLawn.getCoordinates().isEmpty()) {
-                        nearestLawnField = searchingUnit.findNearestFields(locationRoboSheep, coordinatesLawn);
-                    } else {
-                        nearestLawnField = locationCharger;
-                    }
-                    Long mowedFieldToNearestLawnFiled = searchingUnit
-                            .findNearestFields(nearestLawnField, neighbourMowedFields);
-                    nextLocationRoboSheep = mowedFieldToNearestLawnFiled;
-                    long lastLocation9th = roboSheepCoordinatesStore.receiveLastTenLocation().get(8);
-                    long lastLocation10th = roboSheepCoordinatesStore.receiveLastTenLocation().get(9);
-                    if (Collections.frequency(
-                            roboSheepCoordinatesStore.receiveLastTenLocation(), locationRoboSheep) > 3
-                    ) {
-                        int perimeterQuarter = perimeterLength.get(0) / 4;
-                        for (int j = 1; j <= perimeterQuarter; j++) {
-                            System.out.println(perimeterQuarter + "//------------");
-                            previousLocationRoboSheep =
-                                    roboSheepCoordinatesStore.receivePenultimateLocation(locationCharger);
-                            locationRoboSheep = roboSheepCoordinatesStore.receiveLastLocation();
-                            neighbourMowedFields =
-                                    searchingUnit.findAndSortNeighbourTypeFields(
-                                            previousLocationRoboSheep,
-                                            locationRoboSheep,
-                                            roboSheepCoordinatesStore);
-                            long stepVector = locationRoboSheep - previousLocationRoboSheep;
-                            CoordinateDataStore coordinatesPerimeter = new CoordinateDataStore();
-                            coordinatesPerimeter.getCoordinates().addAll(perimeterWay);
+                locationRoboSheepPrevious = roboSheepCoordinatesStore.receivePenultimateLocation(locationCharger);
+                neighbourLawnFields = searchingUnit.findAndSortNeighbourTypeFields(
+                        "Lawn fields around RoboSheep", locationRoboSheepPrevious,
+                        locationRoboSheep, lawnFields);
+                neighbourMowedFields = searchingUnit.findAndSortNeighbourTypeFields(
+                        "Mowed fields around RoboSheep", locationRoboSheepPrevious,
+                        locationRoboSheep, roboSheepCoordinatesStore);
+                locationRoboSheepNext = neighbourLawnFields.getCoordinates().size() > 0 ?
+                        neighbourLawnFields.getCoordinates().get(0) :
+                        neighbourMowedFields.getCoordinates().get(0);
 
-                            Long nearestPerimeterField = searchingUnit.findNearestFields(
-                                    locationRoboSheep, coordinatesPerimeter);
-                            nextLocationRoboSheep = (Collections.frequency(
-                                    roboSheepCoordinatesStore.receiveLastTenLocation(), locationRoboSheep) > 2
-                            ) ? searchingUnit.findNearestFields(nearestPerimeterField, neighbourMowedFields)
-                                    : neighbourMowedFields.getCoordinates().get(1);
-                            i += j;
-                            System.out.println("Steps in nested loop: " + j);
-                            System.out.println("Steps: " + i);
-                            System.out.println("RoboSheep last 10 step: " + roboSheepCoordinatesStore.receiveLastTenLocation());
-                            System.out.println("RoboSheep previous location: " + previousLocationRoboSheep);
-                            System.out.println("RoboSheep location: " + locationRoboSheep);
-                            System.out.println("stepVector: " + stepVector);
-                            System.out.println(neighbourLawnFields);
-                            System.out.println(neighbourMowedFields);
-                            System.out.println("nearestPerimeterField: " + nearestPerimeterField);
-                            System.out.println("RoboSheep next location: " + nextLocationRoboSheep);
-                            printMapFromCoordinatesStore(
-                                    getGardenWidth(),
-                                    getGardenLength(),
-                                    locationRoboSheep,
-                                    locationCharger,
-                                    roboSheepCoordinatesStore,
-                                    coordinatesLawn);
-                            mowerUnit.mow(roboSheepCoordinatesStore, nextLocationRoboSheep, coordinatesLawn);
-                            battery.saveChargeLevelAfterMovement();
-                            keepDistanceBetweenScreenshots(3, MOVEMENTS_FAST, i);
+                if (Collections.frequency(roboSheepCoordinatesStore.receiveLastTenLocation(), locationRoboSheep) > 2) {
+                    nearestLawnField = lawnFields.getCoordinates().isEmpty() ?
+                            locationCharger :
+                            searchingUnit.findNearestFields(locationRoboSheep, lawnFields);
+                    nearestPerimeterFieldToNearestLawn = searchingUnit.findNearestFields(nearestLawnField, perimeterWay);
+                    perimeterSegment = searchingUnit.receivePerimeterSegment(
+                            perimeterWay, locationRoboSheep, nearestPerimeterFieldToNearestLawn);
+                    for (int j = 1; j <= perimeterSegment.getCoordinates().size(); j++) {
+                        locationRoboSheepPrevious =
+                                roboSheepCoordinatesStore.receivePenultimateLocation(locationCharger);
+                        locationRoboSheep = roboSheepCoordinatesStore.receiveLastLocation();
+                        nearestLawnField = searchingUnit.findNearestFields(locationRoboSheep, lawnFields);
+                        nearestPerimeterFieldsToRoboSheep = searchingUnit.findAndSortNeighbourTypeFields(
+                                "nearestPerimeterFieldsToRoboSheep", locationRoboSheepPrevious,
+                                locationRoboSheep, perimeterWay);
+                        nearestPerimeterFieldToRoboSheep = searchingUnit.findNearestFields(
+                                locationRoboSheep, nearestPerimeterFieldsToRoboSheep);
+                        nearestPerimeterFieldToNearestLawn = searchingUnit.findNearestFields(
+                                nearestLawnField, perimeterWay);
+                        neighbourMowedFields = searchingUnit.findAndSortNeighbourTypeFields(
+                                "neighbourMowedFields", locationRoboSheepPrevious,
+                                locationRoboSheep, roboSheepCoordinatesStore);
+                        locationRoboSheepNextToPerimeter = searchingUnit.findNearestFields(
+                                nearestPerimeterFieldToRoboSheep,
+                                neighbourMowedFields
+                        );
+                        if (!perimeterWay.getCoordinates().contains(locationRoboSheep)) {
+                            locationRoboSheepNext = locationRoboSheepNextToPerimeter;
+                        } else {
+                            perimeterSegment = searchingUnit.receivePerimeterSegment(
+                                    perimeterWay, locationRoboSheep, nearestPerimeterFieldToNearestLawn
+                            );
+                            for (int k = 0; k < perimeterSegment.getCoordinates().size(); k++) {
+                                locationRoboSheepNext = perimeterWay.getCoordinates().get(k);
+                                printStepsInLoop(i, j, k);
+                                battery.printBatteryLevel();
+                                printLocations(locationRoboSheepPrevious, locationRoboSheep, locationRoboSheepNext);
+                                printCoordinates(roboSheepCoordinatesStore, neighbourLawnFields, neighbourMowedFields);
+                                printPerimeterSegment(perimeterSegment);
+                                printMapFromCoordinatesStore(
+                                        getGardenWidth(), getGardenLength(), locationRoboSheep,
+                                        locationCharger, roboSheepCoordinatesStore, lawnFields
+                                );
+                                mowerUnit.mow(roboSheepCoordinatesStore, locationRoboSheepNext, lawnFields);
+                                battery.saveChargeLevelAfterMovement();
+                                keepDistanceBetweenScreenshots(3, MOVEMENTS_FAST, i);
+                            }
                         }
+                        printStepsInLoop(i, j, 0);
+                        battery.printBatteryLevel();
+                        printLocations(locationRoboSheepPrevious, locationRoboSheep, locationRoboSheepNext);
+                        printCoordinates(roboSheepCoordinatesStore, neighbourLawnFields, neighbourMowedFields);
+                        printPerimeterSegment(perimeterSegment);
+                        printMapFromCoordinatesStore(getGardenWidth(), getGardenLength(), locationRoboSheep,
+                                locationCharger, roboSheepCoordinatesStore, lawnFields
+                        );
+                        mowerUnit.mow(roboSheepCoordinatesStore, locationRoboSheepNext, lawnFields);
+                        battery.saveChargeLevelAfterMovement();
+                        keepDistanceBetweenScreenshots(3, MOVEMENTS_FAST, i);
                     }
-                    System.out.println("Nearest lawn field: " + nearestLawnField);
-                    System.out.println("Nearest mowed neighbour field to nearest lawn field: " +
-                            mowedFieldToNearestLawnFiled);
                 }
-                System.out.println("Steps: " + i);
-                System.out.println("RoboSheep last 10 step: " + roboSheepCoordinatesStore.receiveLastTenLocation());
-                System.out.println("RoboSheep previous location: " + previousLocationRoboSheep);
-                System.out.println("RoboSheep location: " + locationRoboSheep);
-                System.out.println("stepVector: " + (locationRoboSheep - previousLocationRoboSheep));
-                System.out.println(neighbourLawnFields);
-                System.out.println(neighbourMowedFields);
-                System.out.println("RoboSheep next location: " + nextLocationRoboSheep);
-                printMapFromCoordinatesStore(
-                        getGardenWidth(),
-                        getGardenLength(),
-                        locationRoboSheep,
-                        locationCharger,
-                        roboSheepCoordinatesStore,
-                        coordinatesLawn);
-                mowerUnit.mow(roboSheepCoordinatesStore, nextLocationRoboSheep, coordinatesLawn);
+
+                printStepsInLoop(i, 0, 0);
+                battery.printBatteryLevel();
+                printLocations(locationRoboSheepPrevious, locationRoboSheep, locationRoboSheepNext);
+                printCoordinates(roboSheepCoordinatesStore, neighbourLawnFields, neighbourMowedFields);
+                printMapFromCoordinatesStore(getGardenWidth(), getGardenLength(), locationRoboSheep,
+                        locationCharger, roboSheepCoordinatesStore, lawnFields
+                );
+                mowerUnit.mow(roboSheepCoordinatesStore, locationRoboSheepNext, lawnFields);
                 battery.saveChargeLevelAfterMovement();
                 keepDistanceBetweenScreenshots(3, MOVEMENTS_FAST, i);
             } else {
                 System.out.println("RoboSheep need to go back to charge.");
                 break; //TODO sheep need to go back to the charge
             }
-            if (Objects.equals(locationRoboSheep, locationCharger) && coordinatesLawn.getCoordinates().isEmpty()) {
+            if (Objects.equals(locationRoboSheep, locationCharger) && lawnFields.getCoordinates().isEmpty()) {
                 break;
             }
         }
