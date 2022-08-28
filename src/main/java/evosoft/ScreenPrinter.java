@@ -2,8 +2,8 @@ package evosoft;
 
 public class ScreenPrinter {
 //    private static final long TIME_OUT = 600;
-//    private static final long TIME_OUT = 300;
-    private static final long TIME_OUT = 10;
+    private static final long TIME_MEDIUM = 600;
+    private static final long TIME_FAST = 0;
 
     public static void printMapFromCoordinatesStore(
             long gardenWidth, long gardenLength,
@@ -31,10 +31,16 @@ public class ScreenPrinter {
     }
 
     //after printed characters of map it makes some empty rows in IntelliJ console
-    public static void keepDistanceBetweenScreenshots(int emptyRowBetweenScreenshots) {
+    public static void keepDistanceBetweenScreenshots(int emptyRowBetweenScreenshots, int movementsFast, int stepActual) {
         System.out.println(new String(new char[emptyRowBetweenScreenshots]).replace("\0", "\r\n"));
         try {
-            Thread.sleep(TIME_OUT);
+            long timeOut = 0;
+            if (stepActual < movementsFast){
+                timeOut = TIME_FAST;
+            } else {
+                timeOut = TIME_MEDIUM;
+            }
+            Thread.sleep(timeOut);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -5,10 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RoboSheepSearchingUnit extends CoordinateDataStore {
-    private List<Long> distanceOfNeighbours = Arrays.asList( // clockwise
-            -1L, -1000001L, -1000000L, -999999L, 1L, 1000001L, 1000000L, 999999L);
 
     public CoordinateDataStore findAndSortNeighbourTypeFields(Long previousLocationRoboSheep, Long locationRoboSheep, CoordinateDataStore coordinatesTypeFieldsDB) {
+        List<Long> distanceOfNeighbours = Arrays.asList( // clockwise
+                -1L, -1000001L, -1000000L, -999999L, 1L, 1000001L, 1000000L, 999999L);
         long stepVector = locationRoboSheep - previousLocationRoboSheep;
         distanceOfNeighbours = neighbourFieldsSorter(stepVector, distanceOfNeighbours);
         CoordinateDataStore neighbourFieldsSelected = new CoordinateDataStore();
@@ -27,34 +27,50 @@ public class RoboSheepSearchingUnit extends CoordinateDataStore {
             case 1:
                 distanceOfNeighbours = Arrays.asList( // clockwise
                         -1000001L, -1000000L, -999999L, 1L, 1000001L, 1000000L, 999999L, -1L);
+//                        -1L, -1000001L, -1000000L, -999999L, 1L, 1000001L, 1000000L, 999999L);
+//                        1L, 1000001L, 1000000L, 999999L, -1L, -1000001L, -1000000L, -999999L);
                 break;
             case 1000001:
                 distanceOfNeighbours = Arrays.asList( // clockwise
                         -1000000L, -999999L, 1L, 1000001L, 1000000L, 999999L, -1L, -1000001L);
+//                        -1000001L, -1000000L, -999999L, 1L, 1000001L, 1000000L, 999999L, -1L);
+//                         1000001L, 1000000L, 999999L, -1L, -1000001L, -1000000L, -999999L, 1L);
                 break;
             case 1000000:
                 distanceOfNeighbours = Arrays.asList( // clockwise
                         -999999L, 1L, 1000001L, 1000000L, 999999L, -1L, -1000001L, -1000000L);
+//                        -1000000L, -999999L, 1L, 1000001L, 1000000L, 999999L, -1L, -1000001L);
+//                        1000000L, 999999L, -1L, -1000001L, -1000000L, -999999L, 1L, 1000001L);
                 break;
             case 999999:
                 distanceOfNeighbours = Arrays.asList( // clockwise
                         1L, 1000001L, 1000000L, 999999L, -1L, -1000001L, -1000000L, -999999L);
+//                        -999999L, 1L, 1000001L, 1000000L, 999999L, -1L, -1000001L, -1000000L);
+//                        999999L, -1L, -1000001L, -1000000L, -999999L, 1L, 1000001L, 1000000L);
                 break;
             case -1:
                 distanceOfNeighbours = Arrays.asList( // clockwise
                         1000001L, 1000000L, 999999L, -1L, -1000001L, -1000000L, -999999L, 1L);
+//                        1L, 1000001L, 1000000L, 999999L, -1L, -1000001L, -1000000L, -999999L);
+//                        -1L, -1000001L, -1000000L, -999999L, 1L, 1000001L, 1000000L, 999999L);
                 break;
             case -1000001:
                 distanceOfNeighbours = Arrays.asList( // clockwise
                         1000000L, 999999L, -1L, -1000001L, -1000000L, -999999L, 1L, 1000001L);
+//                        1000001L, 1000000L, 999999L, -1L, -1000001L, -1000000L, -999999L, 1L);
+//                        -1000001L, -1000000L, -999999L, 1L, 1000001L, 1000000L, 999999L, -1L);
                 break;
             case -1000000:
                 distanceOfNeighbours = Arrays.asList( // clockwise
                         999999L, -1L, -1000001L, -1000000L, -999999L, 1L, 1000001L, 1000000L);
+//                        1000000L, 999999L, -1L, -1000001L, -1000000L, -999999L, 1L, 1000001L);
+//                        -1000000L, -999999L, 1L, 1000001L, 1000000L, 999999L, -1L, -1000001L);
                 break;
             case -999999:
                 distanceOfNeighbours = Arrays.asList( // clockwise
                         -1L, -1000001L, -1000000L, -999999L, 1L, 1000001L, 1000000L, 999999L);
+//                        999999L, -1L, -1000001L, -1000000L, -999999L, 1L, 1000001L, 1000000L);
+//                        -999999L, 1L, 1000001L, 1000000L, 999999L, -1L, -1000001L, -1000000L);
                 break;
         }
         return distanceOfNeighbours;
