@@ -97,4 +97,29 @@ public class SearchingUnit extends CoordinateDataStore {
         }
         return perimeterSegment;
     }
+
+    public CoordinateDataStore findSection(
+            CoordinateDataStore neighbourMowedFields, CoordinateDataStore perimeterWay) {
+        CoordinateDataStore section = new CoordinateDataStore("Section area");
+        for (Long neighbourField : neighbourMowedFields.getCoordinates()) {
+            if (perimeterWay.getCoordinates().contains(neighbourField)){
+                section.addConvertedCoordinates(neighbourField);
+            }
+        }
+        return section;
+    }
+
+    public CoordinateDataStore findDetour(long nearestPerimeterFieldToRoboSheep, long nearestPerimeterFieldTofNearestLawn,
+                           CoordinateDataStore perimeterWay) {
+        CoordinateDataStore detour = new CoordinateDataStore("Detour");
+
+
+//        for (int i = (int) nearestPerimeterFieldToRoboSheep; i < nearestPerimeterFieldTofNearestLawn; i++) {
+//            detour.addConvertedCoordinates(perimeterWay.getCoordinates().get(i));
+//        }
+        int startIndex = perimeterWay.getCoordinates().indexOf(nearestPerimeterFieldToRoboSheep);
+        int endIndex = perimeterWay.getCoordinates().indexOf(nearestPerimeterFieldTofNearestLawn);
+        detour.setCoordinates(perimeterWay.getCoordinates().subList(startIndex + 1, endIndex));
+        return detour;
+    }
 }

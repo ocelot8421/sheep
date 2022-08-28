@@ -1,5 +1,9 @@
 package evosoft;
 
+import static evosoft.GardenMapImporter.getGardenLength;
+import static evosoft.GardenMapImporter.getGardenWidth;
+import static evosoft.ScreenPrinter.*;
+
 public class MowerUnit {
     public void mow(
             RoboSheepCoordinatesStore roboSheepCoordinatesStore,
@@ -8,5 +12,6 @@ public class MowerUnit {
         roboSheepCoordinatesStore.addConvertedCoordinates(nextLocationRoboSheep);
         coordinatesLawn.removeConvertedCoordinate(nextLocationRoboSheep);
     }
+
 
 }

@@ -44,6 +44,10 @@ public class CoordinateDataStore {
         return coordinates;
     }
 
+    public void setCoordinates(List<Long> coordinates) {
+        this.coordinates = coordinates;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
