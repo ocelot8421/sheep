@@ -1,8 +1,9 @@
 package evosoft;
 
 public class ScreenPrinter {
-    private static final long TIME_MEDIUM = 600;
+//    private static final long TIME_MEDIUM = 600;
 //    private static final long TIME_MEDIUM = 150;
+    private static final long TIME_MEDIUM = 50;
             private static final long TIME_FAST = 50;
 //    private static final long TIME_FAST = 0;
 
@@ -53,7 +54,7 @@ public class ScreenPrinter {
         System.out.println(".................");
         System.out.println("Steps in i loop: " + iLoop);
         System.out.println("Steps in j loop: " + jLoop);
-        System.out.println("Steps in k loop: " + kLoop);
+        System.out.println("Steps sum      : " + (iLoop + jLoop));
         System.out.println("----------------------------------------");
     }
 

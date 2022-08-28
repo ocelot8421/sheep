@@ -1,6 +1,7 @@
 package evosoft;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class SearchingUnit extends CoordinateDataStore {
@@ -85,8 +86,7 @@ public class SearchingUnit extends CoordinateDataStore {
     public CoordinateDataStore receivePerimeterSegment(
             CoordinateDataStore perimeterWay,
             long locationRoboSheep,
-            long nearestPerimeterFieldOfNearestLawn
-    ) {
+            long nearestPerimeterFieldOfNearestLawn) {
         int startAround = perimeterWay.getCoordinates().indexOf(locationRoboSheep);
         int stopAround = perimeterWay.getCoordinates().indexOf(nearestPerimeterFieldOfNearestLawn);
         CoordinateDataStore perimeterSegment = new CoordinateDataStore("Perimeter segment coordinate");
@@ -102,24 +102,25 @@ public class SearchingUnit extends CoordinateDataStore {
             CoordinateDataStore neighbourMowedFields, CoordinateDataStore perimeterWay) {
         CoordinateDataStore section = new CoordinateDataStore("Section area");
         for (Long neighbourField : neighbourMowedFields.getCoordinates()) {
-            if (perimeterWay.getCoordinates().contains(neighbourField)){
+            if (perimeterWay.getCoordinates().contains(neighbourField)) {
                 section.addConvertedCoordinates(neighbourField);
             }
         }
         return section;
     }
 
-    public CoordinateDataStore findDetour(long nearestPerimeterFieldToRoboSheep, long nearestPerimeterFieldTofNearestLawn,
-                           CoordinateDataStore perimeterWay) {
+    public CoordinateDataStore findDetour(
+            long nearestPerimeterFieldToRoboSheep, long nearestPerimeterFieldTofNearestLawn, CoordinateDataStore perimeterWay) {
         CoordinateDataStore detour = new CoordinateDataStore("Detour");
-
-
-//        for (int i = (int) nearestPerimeterFieldToRoboSheep; i < nearestPerimeterFieldTofNearestLawn; i++) {
-//            detour.addConvertedCoordinates(perimeterWay.getCoordinates().get(i));
-//        }
         int startIndex = perimeterWay.getCoordinates().indexOf(nearestPerimeterFieldToRoboSheep);
         int endIndex = perimeterWay.getCoordinates().indexOf(nearestPerimeterFieldTofNearestLawn);
-        detour.setCoordinates(perimeterWay.getCoordinates().subList(startIndex + 1, endIndex));
+
+        if (startIndex <= endIndex) {
+            detour.setCoordinates(perimeterWay.getCoordinates().subList(startIndex, endIndex + 1));
+        } else {
+            detour.setCoordinates(perimeterWay.getCoordinates().subList(endIndex, startIndex + 1));
+            detour.getCoordinates().sort(Collections.reverseOrder());
+        }
         return detour;
     }
 }

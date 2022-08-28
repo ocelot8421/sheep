@@ -10,7 +10,9 @@ public class WaterFall {
     private static final int MOVEMENTS_MAX = 1000000;
     //    private static final int MOVEMENTS_FAST = 196; // situation at left bottom corner
 //    private static final int MOVEMENTS_FAST = 355; // situation in the center - left garden area
-    private static final int MOVEMENTS_FAST = 388; // situation at right upper corner - left garden area
+//    private static final int MOVEMENTS_FAST = 388; // situation at right upper corner - left garden area
+//    private static final int MOVEMENTS_FAST = 475; // situation at left upper corner - right garden area
+    private static final int MOVEMENTS_FAST = 672; // situation at right side - right garden area
     //    private static final int MOVEMENTS_FAST = 1173;
     private static final int PERIMETER_MIN = 8;
 
@@ -71,7 +73,7 @@ public class WaterFall {
                 if (isInLoop) {
                     CoordinateDataStore detour = searchingUnit.findDetour(
                             nearestPerimeterFieldToRoboSheep, nearestPerimeterFieldTofNearestLawn, perimeterWay);
-                    for (int j = 0; j < detour.getCoordinates().size(); j++) {
+                    for (int j = 0; j < detour.getCoordinates().size() - 1; j++) {
 
                         locationRoboSheep = detour.getCoordinates().get(j);
                         locationRoboSheepNext = detour.getCoordinates().get(j + 1);
