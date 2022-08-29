@@ -10,6 +10,10 @@ public class CoordinateDataStore {
     public CoordinateDataStore() {
     }
 
+    public CoordinateDataStore(List<Long> coordinates) {
+        this.coordinates = coordinates;
+    }
+
     public CoordinateDataStore(String name) {
         this.name = name;
     }
@@ -29,7 +33,7 @@ public class CoordinateDataStore {
     public List<Long> receiveLastNCoordinates(int n) {
         int endIndex = coordinates.size() == 0 ? 0 : Math.max(n, coordinates.size() - 1);
         int startIndex = Math.max(endIndex - n, 0);
-         return coordinates.subList(startIndex, endIndex);
+        return coordinates.subList(startIndex, endIndex);
     }
 
     public void addConvertedCoordinates(long coordinate) {
@@ -54,6 +58,6 @@ public class CoordinateDataStore {
 
     @Override
     public String toString() {
-        return name + ": " + coordinates;
+        return name + ": \n" + coordinates;
     }
 }

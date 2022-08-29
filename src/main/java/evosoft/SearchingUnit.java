@@ -1,10 +1,15 @@
 package evosoft;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class SearchingUnit extends CoordinateDataStore {
+
+    public SearchingUnit() {
+    }
+
+    public SearchingUnit(String name) {
+        super(name);
+    }
 
     public CoordinateDataStore findAndSortNeighbourTypeFields(
             String name, Long previousLocationRoboSheep, Long locationRoboSheep, CoordinateDataStore coordinatesTypeFieldsDB
@@ -24,45 +29,8 @@ public class SearchingUnit extends CoordinateDataStore {
         return neighbourFieldsSelected;
     }
 
-    private List<Long> neighbourFieldsSorter(long stepVector, List<Long> distanceOfNeighbours) {
-        switch ((int) stepVector) { //TODO it should be nicer (part of one list are repeating)
-            case 1:
-                distanceOfNeighbours = Arrays.asList( // clockwise
-                        -1000001L, -1000000L, -999999L, 1L, 1000001L, 1000000L, 999999L, -1L);
-                break;
-            case 1000001:
-                distanceOfNeighbours = Arrays.asList( // clockwise
-                        -1000000L, -999999L, 1L, 1000001L, 1000000L, 999999L, -1L, -1000001L);
-                break;
-            case 1000000:
-                distanceOfNeighbours = Arrays.asList( // clockwise
-                        -999999L, 1L, 1000001L, 1000000L, 999999L, -1L, -1000001L, -1000000L);
-                break;
-            case 999999:
-                distanceOfNeighbours = Arrays.asList( // clockwise
-                        1L, 1000001L, 1000000L, 999999L, -1L, -1000001L, -1000000L, -999999L);
-                break;
-            case -1:
-                distanceOfNeighbours = Arrays.asList( // clockwise
-                        1000001L, 1000000L, 999999L, -1L, -1000001L, -1000000L, -999999L, 1L);
-                break;
-            case -1000001:
-                distanceOfNeighbours = Arrays.asList( // clockwise
-                        1000000L, 999999L, -1L, -1000001L, -1000000L, -999999L, 1L, 1000001L);
-                break;
-            case -1000000:
-                distanceOfNeighbours = Arrays.asList( // clockwise
-                        999999L, -1L, -1000001L, -1000000L, -999999L, 1L, 1000001L, 1000000L);
-                break;
-            case -999999:
-                distanceOfNeighbours = Arrays.asList( // clockwise
-                        -1L, -1000001L, -1000000L, -999999L, 1L, 1000001L, 1000000L, 999999L);
-                break;
-        }
-        return distanceOfNeighbours;
-    }
 
-    public Long findNearestFields(Long spot, CoordinateDataStore coordinatesOfArea) {
+    public Long findNearestField(Long spot, CoordinateDataStore coordinatesOfArea) {
         double minDistance = Math.sqrt(2) * 1000000;
         long coordinateXSheep = spot % 1000000;
         long coordinateYSheep = (spot - coordinateXSheep) / 1000000;
@@ -109,30 +77,95 @@ public class SearchingUnit extends CoordinateDataStore {
         return section;
     }
 
-    public CoordinateDataStore findDetour(
-            long nearestPerimeterFieldToRoboSheep, long nearestPerimeterFieldTofNearestLawn, CoordinateDataStore perimeterWayCoorected) {
-        CoordinateDataStore detour = new CoordinateDataStore("Detour");
-        int startIndex = perimeterWayCoorected.getCoordinates().indexOf(nearestPerimeterFieldToRoboSheep);
-        int endIndex = perimeterWayCoorected.getCoordinates().indexOf(nearestPerimeterFieldTofNearestLawn);
+//    public CoordinateDataStore findDetour(
+//            long nearestPerimeterFieldToRoboSheep, long nearestPerimeterFieldTofNearestLawn, CoordinateDataStore perimeterWayCoorected) {
+//        CoordinateDataStore detour = new CoordinateDataStore("Detour");
+//        List<Long> helperDetour = new CopyOnWriteArrayList<>();
+//        List<Long> helperPerimeterWayCorrected = new CopyOnWriteArrayList<>();
+//        helperPerimeterWayCorrected.addAll(perimeterWayCoorected.getCoordinates());
+//        int startIndex = helperPerimeterWayCorrected.indexOf(nearestPerimeterFieldToRoboSheep);
+//        int endIndex = helperPerimeterWayCorrected.indexOf(nearestPerimeterFieldTofNearestLawn);
+//        if (startIndex <= endIndex) {
+//            helperDetour.addAll(perimeterWayCoorected.getCoordinates().subList(startIndex, endIndex + 1));
+//        } else {
+//            helperDetour.addAll(perimeterWayCoorected.getCoordinates().subList(endIndex, endIndex + 1));
+//            helperDetour.sort(Collections.reverseOrder());
+//        }
+//        detour.setCoordinates(helperDetour);
+//        return detour;
+//    }
 
-        if (startIndex <= endIndex) {
-            detour.setCoordinates(perimeterWayCoorected.getCoordinates().subList(startIndex, endIndex + 1));
-        } else {
-            detour.setCoordinates(perimeterWayCoorected.getCoordinates().subList(endIndex, startIndex + 1));
-            detour.getCoordinates().sort(Collections.reverseOrder());
-        }
-        return detour;
+    // subList does not work
+    public CoordinateDataStore receiveCorrectedPerimeterWay(
+            CoordinateDataStore perimeterWay, Long locationCharge
+    ) {
+        CoordinateDataStore perimeterCorrected = new CoordinateDataStore("Corrected perimeter way");
+        Long nearestFiled = findNearestField(locationCharge, perimeterWay);
+        int endIndex = perimeterWay.getCoordinates().indexOf(nearestFiled);
+        perimeterCorrected.setCoordinates(perimeterWay.getCoordinates().subList(0, endIndex));
+        return perimeterCorrected;
     }
 
-    public CoordinateDataStore receiveCorrectedPerimeterWay(CoordinateDataStore perimeterWay, CoordinateDataStore neighbourMowedFieldsCharger) {
-        CoordinateDataStore perimeterCorrected = new CoordinateDataStore("Corrected perimeter way");
-        for (Long coordinate : perimeterWay.getCoordinates()) {
-            if (!neighbourMowedFieldsCharger.getCoordinates().contains(coordinate)) {
-                perimeterCorrected.addConvertedCoordinates(coordinate);
-            } else {
+    private List<Long> neighbourFieldsSorter(long stepVector, List<Long> distanceOfNeighbours) {
+        switch ((int) stepVector) { //TODO it should be nicer (part of one list are repeating)
+            case 1:
+                distanceOfNeighbours = Arrays.asList( // clockwise
+                        -1000001L, -1000000L, -999999L, 1L, 1000001L, 1000000L, 999999L, -1L);
                 break;
+            case 1000001:
+                distanceOfNeighbours = Arrays.asList( // clockwise
+                        -1000000L, -999999L, 1L, 1000001L, 1000000L, 999999L, -1L, -1000001L);
+                break;
+            case 1000000:
+                distanceOfNeighbours = Arrays.asList( // clockwise
+                        -999999L, 1L, 1000001L, 1000000L, 999999L, -1L, -1000001L, -1000000L);
+                break;
+            case 999999:
+                distanceOfNeighbours = Arrays.asList( // clockwise
+                        1L, 1000001L, 1000000L, 999999L, -1L, -1000001L, -1000000L, -999999L);
+                break;
+            case -1:
+                distanceOfNeighbours = Arrays.asList( // clockwise
+                        1000001L, 1000000L, 999999L, -1L, -1000001L, -1000000L, -999999L, 1L);
+                break;
+            case -1000001:
+                distanceOfNeighbours = Arrays.asList( // clockwise
+                        1000000L, 999999L, -1L, -1000001L, -1000000L, -999999L, 1L, 1000001L);
+                break;
+            case -1000000:
+                distanceOfNeighbours = Arrays.asList( // clockwise
+                        999999L, -1L, -1000001L, -1000000L, -999999L, 1L, 1000001L, 1000000L);
+                break;
+            case -999999:
+                distanceOfNeighbours = Arrays.asList( // clockwise
+                        -1L, -1000001L, -1000000L, -999999L, 1L, 1000001L, 1000000L, 999999L);
+                break;
+        }
+        return distanceOfNeighbours;
+    }
+
+    //subList() and sort() does not work
+    public List<Long> findLineSegment(Long spotNearLineStart, Long sportNearLineEnd, List<Long> way) {
+        List<Long> result = new ArrayList<>();
+        int indexAroundSheep = 0;
+        int indexAroundLawn = 0;
+        for (int i = 0; i < way.size(); i++) {
+            if (Objects.equals(spotNearLineStart, way.get(i))) {
+                indexAroundSheep = i;
+            }
+            if (Objects.equals(sportNearLineEnd, way.get(i))) {
+                indexAroundLawn = i;
             }
         }
-        return perimeterCorrected;
+        if (indexAroundSheep < indexAroundLawn) {
+            for (int j = indexAroundSheep; j < Math.abs(indexAroundLawn - indexAroundSheep); j++) {
+                result.add(way.get(j));
+            }
+        } else {
+            for (int j = indexAroundLawn; j > Math.abs(indexAroundLawn - indexAroundSheep); j--) {
+                result.add(way.get(j));
+            }
+        }
+        return result;
     }
 }

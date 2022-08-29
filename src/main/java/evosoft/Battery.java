@@ -9,7 +9,6 @@ public class Battery {
         boolean needCharge = true;
         if (batteryLevel > minBatteryLevel){
             needCharge = false;
-        } else {
         }
         return needCharge;
     }

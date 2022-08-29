@@ -1,11 +1,12 @@
 package evosoft;
 
 public class ScreenPrinter {
-    private static final long TIME_MEDIUM = 600;
-//    private static final long TIME_MEDIUM = 150;
+//    private static final long TIME_MEDIUM = 600;
+    private static final long TIME_MEDIUM = 150;
 //    private static final long TIME_MEDIUM = 50;
-//    private static final long TIME_FAST = 50;
-    private static final long TIME_FAST = 0;
+private static final long TIME_FAST = 150;
+    //    private static final long TIME_FAST = 50;
+//    private static final long TIME_FAST = 0;
 
     public static void printMapFromCoordinatesStore(
             long gardenWidth, long gardenLength,

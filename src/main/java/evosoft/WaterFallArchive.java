@@ -71,12 +71,12 @@ public class WaterFallArchive {
                 } else {
                     Long nearestLawnField;
                     if (!coordinatesLawn.getCoordinates().isEmpty()) {
-                        nearestLawnField = searchingUnit.findNearestFields(locationRoboSheep, coordinatesLawn);
+                        nearestLawnField = searchingUnit.findNearestField(locationRoboSheep, coordinatesLawn);
                     } else {
                         nearestLawnField = locationCharger;
                     }
                     Long mowedFieldToNearestLawnFiled = searchingUnit
-                            .findNearestFields(nearestLawnField, neighbourMowedFields);
+                            .findNearestField(nearestLawnField, neighbourMowedFields);
                     nextLocationRoboSheep = mowedFieldToNearestLawnFiled;
                     long lastLocation9th = roboSheepCoordinatesStore.receiveLastTenLocation().get(8);
                     long lastLocation10th = roboSheepCoordinatesStore.receiveLastTenLocation().get(9);
@@ -99,11 +99,11 @@ public class WaterFallArchive {
                             CoordinateDataStore coordinatesPerimeter = new CoordinateDataStore();
                             coordinatesPerimeter.getCoordinates().addAll(perimeterWay);
 
-                            Long nearestPerimeterField = searchingUnit.findNearestFields(
+                            Long nearestPerimeterField = searchingUnit.findNearestField(
                                     locationRoboSheep, coordinatesPerimeter);
                             nextLocationRoboSheep = (Collections.frequency(
                                     roboSheepCoordinatesStore.receiveLastTenLocation(), locationRoboSheep) > 2
-                            ) ? searchingUnit.findNearestFields(nearestPerimeterField, neighbourMowedFields)
+                            ) ? searchingUnit.findNearestField(nearestPerimeterField, neighbourMowedFields)
                                     : neighbourMowedFields.getCoordinates().get(1);
                             i += j;
                             System.out.println("Steps in nested loop: " + j);

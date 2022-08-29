@@ -6,6 +6,13 @@ import java.util.List;
 
 public class RoboSheepCoordinatesStore extends CoordinateDataStore {
 
+    public RoboSheepCoordinatesStore() {
+    }
+
+    public RoboSheepCoordinatesStore(String name) {
+        super(name);
+    }
+
     public Long receiveLastLocation() {
         List<Long> locationList = super.getCoordinates();
         return locationList.get(locationList.size() - 1);
