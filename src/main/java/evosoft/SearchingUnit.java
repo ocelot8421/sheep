@@ -162,10 +162,16 @@ public class SearchingUnit extends CoordinateDataStore {
                 result.add(way.get(j));
             }
         } else {
-            for (int j = indexAroundLawn; j > Math.abs(indexAroundLawn - indexAroundSheep); j--) {
+            for (int j = indexAroundLawn; j > Math.abs(indexAroundLawn - indexAroundSheep) * 2 ; j--) {
                 result.add(way.get(j));
             }
         }
+        if (result.size() == 0){
+            for (int j = 0; j > way.size() ; j--) {
+                result.add(way.get(j));
+            }
+        }
+
         return result;
     }
 }
